@@ -241,18 +241,46 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       person: {
         firstName: "",
         lastName: ""
-      }
+      },
+      errors: []
     };
   },
   methods: {
     HandlerChangeTextInput: function HandlerChangeTextInput(evt) {
       this.person[evt.target.name] = evt.target.value;
+    },
+    checkForm: function checkForm() {
+      if (this.person.firstName && this.person.lastName) {
+        return true;
+      }
+
+      this.errors = [];
+
+      if (!this.person.firstName) {
+        this.errors.push("Требуется указать имя.");
+      }
+
+      if (!this.person.lastName) {
+        this.errors.push("Требуется указать фамилию.");
+      }
+    },
+    handleSubmit: function handleSubmit() {
+      if (this.checkForm()) {
+        this.errors = [];
+        this.$emit("add_person", this.person);
+      }
     }
   }
 });
@@ -406,7 +434,7 @@ var arrowPath = function arrowPath(asc) {
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, "\n#app{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-line-pack:center;align-content:center;line-height:1.4;font-family:Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#191919;margin:30px;border-radius:15px;-webkit-box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1);box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1)\n}", "",{"version":3,"sources":["src/app.vue","app.vue"],"names":[],"mappings":";AAgGA,KACA,mBAAA,CAAA,mBAAA,CAAA,YAAA,CAAA,2BAAA,CACA,4BAAA,CAAA,yBAAA,CAAA,qBAAA,CAAA,uBAAA,CACA,oBAAA,CAAA,sBAAA,CAAA,yBAAA,CACA,oBAAA,CAAA,eAAA,CACA,6CAAA,CACA,kCAAA,CACA,iCAAA,CACA,aAAA,CACA,WAAA,CAEA,kBAAA,CACA,+EAAA,CAEA;AC5GA","file":"app.vue","sourcesContent":["<template>\n  <div id=\"app\">\n    <div class=\"visually-hidden\">\n      <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n      <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\">\n        <g id=\"sort_desc\">\n          <polygon stroke=\"#000000\" stroke-miterlimit=\"10\" points=\"8,2 1.1,14 14.9,14\"></polygon>\n        </g>\n        <g id=\"sort_asc\">\n          <polygon stroke=\"#000000\" stroke-miterlimit=\"10\" points=\"8,14.5 14.9,2.5 1.1,2.5\"></polygon>\n        </g>\n      </svg>\n    </div>\n    <div class=\"container\">\n      <h1>Table on Vue</h1>\n    </div>\n    <div class=\"container\">\n      <TablePeople\n        :sortedPeople=\"sortedPeople\"\n        v-on:sortPersons=\"setSortConfiguration\"\n        :sortBy=\"sortBy\"\n        :asc=\"asc\"\n      />\n      <NewPeopleForm v-on:addPerson=\"addPerson\"/>\n    </div>\n  </div>\n</template>\n<script>\nimport TablePeople from \"./components/table-people/table-people.vue\";\nimport NewPeopleForm from \"./components/new-people-form/new-people-form.vue\";\n\nexport default {\n  components: {\n    TablePeople,\n    NewPeopleForm\n  },\n  data() {\n    return {\n      people: [\n        {\n          id: 0,\n          firstName: \"Петр\",\n          lastName: \"Петров\"\n        },\n        {\n          id: 1,\n          firstName: \"Иван\",\n          lastName: \"Иванов\"\n        },\n        {\n          id: 2,\n          firstName: \"Сергей\",\n          lastName: \"Сергеев\"\n        }\n      ],\n      asc: true,\n      sortBy: \"id\",\n      page: 1,\n      rowsPerPage: 10\n    };\n  },\n  methods: {\n    addPerson(newPerson) {\n      const personCounter = this.people.length;\n      this.people.push({\n        id: personCounter,\n        firstName: newPerson.firstName,\n        lastName: newPerson.lastName\n      });\n    },\n    setSortConfiguration(sortColumn) {\n      if (sortColumn === this.sortBy) {\n        return (this.asc = !this.asc);\n      }\n      this.asc = \"asc\";\n      return (this.sortBy = sortColumn);\n    }\n  },\n  computed: {\n    sortedPeople: function() {\n      return [...this.people].sort((a, b) => {\n        if (a[this.sortBy] > b[this.sortBy]) {\n          return this.asc ? 1 : -1;\n        }\n        if (a[this.sortBy] < b[this.sortBy]) {\n          return this.asc ? -1 : 1;\n        }\n        return 0;\n      });\n    }\n  }\n};\n</script>\n\n\n<style>\n#app {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-content: center;\n  line-height: 1.4;\n  font-family: \"Roboto\", Helvetica, Arial, sans-serif;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  color: #191919;\n\n  margin: 30px;\n  border-radius: 15px;\n\n  box-shadow: 0px 0px 5px 0px rgba(100, 100, 100, 0.05),\n    0px 0px 5px 2px rgba(50, 50, 50, 0.1);\n}\n</style>\n","\n#app{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-line-pack:center;align-content:center;line-height:1.4;font-family:Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#191919;margin:30px;border-radius:15px;-webkit-box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1);box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1)\n}"]}]);
+exports.push([module.i, "\n#app{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-line-pack:center;align-content:center;line-height:1.4;font-family:Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#191919;margin:30px;border-radius:15px;-webkit-box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1);box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1)\n}", "",{"version":3,"sources":["src/app.vue","app.vue"],"names":[],"mappings":";AAgGA,KACA,mBAAA,CAAA,mBAAA,CAAA,YAAA,CAAA,2BAAA,CACA,4BAAA,CAAA,yBAAA,CAAA,qBAAA,CAAA,uBAAA,CACA,oBAAA,CAAA,sBAAA,CAAA,yBAAA,CACA,oBAAA,CAAA,eAAA,CACA,6CAAA,CACA,kCAAA,CACA,iCAAA,CACA,aAAA,CACA,WAAA,CAEA,kBAAA,CACA,+EAAA,CAEA;AC5GA","file":"app.vue","sourcesContent":["<template>\n  <div id=\"app\">\n    <div class=\"visually-hidden\">\n      <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n      <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\">\n        <g id=\"sort_desc\">\n          <polygon stroke=\"#000000\" stroke-miterlimit=\"10\" points=\"8,2 1.1,14 14.9,14\"></polygon>\n        </g>\n        <g id=\"sort_asc\">\n          <polygon stroke=\"#000000\" stroke-miterlimit=\"10\" points=\"8,14.5 14.9,2.5 1.1,2.5\"></polygon>\n        </g>\n      </svg>\n    </div>\n    <div class=\"container\">\n      <h1>Table on Vue</h1>\n    </div>\n    <div class=\"container\">\n      <TablePeople\n        :sortedPeople=\"sortedPeople\"\n        v-on:sortPersons=\"setSortConfiguration\"\n        :sortBy=\"sortBy\"\n        :asc=\"asc\"\n      />\n      <NewPeopleForm v-on:add_person=\"addPerson\"/>\n    </div>\n  </div>\n</template>\n<script>\nimport TablePeople from \"./components/table-people/table-people.vue\";\nimport NewPeopleForm from \"./components/new-people-form/new-people-form.vue\";\n\nexport default {\n  components: {\n    TablePeople,\n    NewPeopleForm\n  },\n  data() {\n    return {\n      people: [\n        {\n          id: 0,\n          firstName: \"Петр\",\n          lastName: \"Петров\"\n        },\n        {\n          id: 1,\n          firstName: \"Иван\",\n          lastName: \"Иванов\"\n        },\n        {\n          id: 2,\n          firstName: \"Сергей\",\n          lastName: \"Сергеев\"\n        }\n      ],\n      asc: true,\n      sortBy: \"id\",\n      page: 1,\n      rowsPerPage: 10\n    };\n  },\n  methods: {\n    addPerson(newPerson) {\n      const personCounter = this.people.length;\n      this.people.push({\n        id: personCounter,\n        firstName: newPerson.firstName,\n        lastName: newPerson.lastName\n      });\n    },\n    setSortConfiguration(sortColumn) {\n      if (sortColumn === this.sortBy) {\n        return (this.asc = !this.asc);\n      }\n      this.asc = \"asc\";\n      return (this.sortBy = sortColumn);\n    }\n  },\n  computed: {\n    sortedPeople: function() {\n      return [...this.people].sort((a, b) => {\n        if (a[this.sortBy] > b[this.sortBy]) {\n          return this.asc ? 1 : -1;\n        }\n        if (a[this.sortBy] < b[this.sortBy]) {\n          return this.asc ? -1 : 1;\n        }\n        return 0;\n      });\n    }\n  }\n};\n</script>\n\n\n<style>\n#app {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-content: center;\n  line-height: 1.4;\n  font-family: \"Roboto\", Helvetica, Arial, sans-serif;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  color: #191919;\n\n  margin: 30px;\n  border-radius: 15px;\n\n  box-shadow: 0px 0px 5px 0px rgba(100, 100, 100, 0.05),\n    0px 0px 5px 2px rgba(50, 50, 50, 0.1);\n}\n</style>\n","\n#app{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-line-pack:center;align-content:center;line-height:1.4;font-family:Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#191919;margin:30px;border-radius:15px;-webkit-box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1);box-shadow:0 0 5px 0 hsla(0,0%,39.2%,.05),0 0 5px 2px rgba(50,50,50,.1)\n}"]}]);
 
 
 
@@ -421,7 +449,7 @@ exports.push([module.i, "\n#app{display:-webkit-box;display:-ms-flexbox;display:
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(true);
 // Module
-exports.push([module.i, "\n.wrapper{padding:20px 40px\n}\n.make-person{width:300px;border:1px solid #add8e6;border-radius:5px;padding:15px 15px 30px 25px;background-color:#add8e6;color:#ff4500\n}\n.make-person__button{margin:10px 0;padding:10px 15px;border-radius:5px;border-width:0;color:#add8e6;background-color:#ff4500;font-size:18px;-webkit-box-shadow:0 0 0 1px #ff4500;box-shadow:0 0 0 1px #ff4500\n}\n.make-person__button:hover{-webkit-box-shadow:5px 5px 10px 0 rgba(255,69,0,.5);box-shadow:5px 5px 10px 0 rgba(255,69,0,.5)\n}\n.make-person__button:hover .button__text{color:#000\n}\n.make-person__unit{display:block;padding:5px 0\n}\n.make-person__unit:hover{color:#000\n}\n.make-person__input{border-width:0;border-radius:1px;line-height:24px;padding:2px 5px\n}", "",{"version":3,"sources":["src/components/new-people-form/new-people-form.vue","new-people-form.vue"],"names":[],"mappings":";AAmDA,SACA;AClDA;ADoDA,aACA,WAAA,CAAA,wBAAA,CACA,iBAAA,CACA,2BAAA,CACA,wBAAA,CACA;ACvDA;AD0DA,qBACA,aAAA,CAAA,iBAAA,CACA,iBAAA,CACA,cAAA,CACA,aAAA,CACA,wBAAA,CACA,cAAA,CACA,oCAAA,CACA;AChEA;ADkEA,2BACA,mDAAA,CAAA;ACjEA;ADoEA,yCACA;ACnEA;ADqEA,mBACA,aAAA,CAAA;ACpEA;ADuEA,yBACA;ACtEA;ADyEA,oBACA,cAAA,CAAA,iBAAA,CACA,gBAAA,CACA;AC1EA","file":"new-people-form.vue","sourcesContent":["<template>\n  <section class=\"wrapper\">\n    <form class=\"make-person\" v-on:submit.prevent=\"$emit('addPerson', person)\">\n      <h4>Add new person:</h4>\n      <label for=\"first-name\" class=\"make-person__unit\">\n        First Name:\n        <input\n          v-on:change=\"HandlerChangeTextInput\"\n          type=\"text\"\n          name=\"firstName\"\n          class=\"make-person__input\"\n          id=\"first-name\"\n          placeholder=\"type text here\"\n        >\n      </label>\n\n      <label for=\"last-name\" class=\"make-person__unit\">\n        Last Name:\n        <input\n          v-on:change=\"HandlerChangeTextInput\"\n          type=\"text\"\n          name=\"lastName\"\n          class=\"make-person__input\"\n          id=\"last-name\"\n          placeholder=\"type text here\"\n        >\n      </label>\n      <button type=\"submit\" class=\"make-person__button\">\n        <span class=\"button__text\">Add person</span>\n      </button>\n    </form>\n  </section>\n</template>\n<script>\nexport default {\n  data() {\n    return {\n      person: {\n        firstName: \"\",\n        lastName: \"\"\n      }\n    };\n  },\n  methods: {\n    HandlerChangeTextInput(evt) {\n      this.person[evt.target.name] = evt.target.value;\n    }\n  }\n};\n</script>\n<style>\n.wrapper {\n  padding: 20px 40px;\n}\n.make-person {\n  width: 300px;\n  border: 1px solid lightblue;\n  border-radius: 5px;\n  padding: 15px 15px 30px 25px;\n  background-color: lightblue;\n  color: orangered;\n}\n.make-person__button {\n  margin: 10px 0 10px 0;\n  padding: 10px 15px;\n  border-radius: 5px;\n  border-width: 0px;\n  color: lightblue;\n  background-color: orangered;\n  font-size: 18px;\n  box-shadow: 0px 0px 0px 1px rgba(255, 69, 0, 1);\n}\n.make-person__button:hover {\n  box-shadow: 5px 5px 10px 0px rgba(255, 69, 0, 0.5);\n}\n\n.make-person__button:hover .button__text {\n  color: black;\n}\n.make-person__unit {\n  display: block;\n  padding: 5px 0;\n}\n.make-person__unit:hover {\n  color: black;\n}\n\n.make-person__input {\n  border-width: 0px;\n  border-radius: 1px;\n  line-height: 24px;\n  padding: 2px 5px;\n}\n</style>\n","\n.wrapper{padding:20px 40px\n}\n.make-person{width:300px;border:1px solid #add8e6;border-radius:5px;padding:15px 15px 30px 25px;background-color:#add8e6;color:#ff4500\n}\n.make-person__button{margin:10px 0;padding:10px 15px;border-radius:5px;border-width:0;color:#add8e6;background-color:#ff4500;font-size:18px;-webkit-box-shadow:0 0 0 1px #ff4500;box-shadow:0 0 0 1px #ff4500\n}\n.make-person__button:hover{-webkit-box-shadow:5px 5px 10px 0 rgba(255,69,0,.5);box-shadow:5px 5px 10px 0 rgba(255,69,0,.5)\n}\n.make-person__button:hover .button__text{color:#000\n}\n.make-person__unit{display:block;padding:5px 0\n}\n.make-person__unit:hover{color:#000\n}\n.make-person__input{border-width:0;border-radius:1px;line-height:24px;padding:2px 5px\n}"]}]);
+exports.push([module.i, "\n.wrapper{padding:20px 40px\n}\n.make-person{width:300px;border:1px solid #add8e6;border-radius:5px;padding:15px 15px 30px 25px;background-color:#add8e6;color:#ff4500\n}\n.make-person__button{margin:10px 0;padding:10px 15px;border-radius:5px;border-width:0;color:#add8e6;background-color:#ff4500;font-size:18px;-webkit-box-shadow:0 0 0 1px #ff4500;box-shadow:0 0 0 1px #ff4500\n}\n.make-person__button:hover{-webkit-box-shadow:5px 5px 10px 0 rgba(255,69,0,.5);box-shadow:5px 5px 10px 0 rgba(255,69,0,.5)\n}\n.make-person__button:hover .button__text{color:#000\n}\n.make-person__unit{display:block;padding:5px 0\n}\n.make-person__unit:hover{color:#000\n}\n.make-person__input{border-width:0;border-radius:1px;line-height:24px;padding:2px 5px\n}", "",{"version":3,"sources":["src/components/new-people-form/new-people-form.vue","new-people-form.vue"],"names":[],"mappings":";AA8EA,SACA;AC7EA;AD+EA,aACA,WAAA,CAAA,wBAAA,CACA,iBAAA,CACA,2BAAA,CACA,wBAAA,CACA;AClFA;ADqFA,qBACA,aAAA,CAAA,iBAAA,CACA,iBAAA,CACA,cAAA,CACA,aAAA,CACA,wBAAA,CACA,cAAA,CACA,oCAAA,CACA;AC3FA;AD6FA,2BACA,mDAAA,CAAA;AC5FA;AD+FA,yCACA;AC9FA;ADgGA,mBACA,aAAA,CAAA;AC/FA;ADkGA,yBACA;ACjGA;ADoGA,oBACA,cAAA,CAAA,iBAAA,CACA,gBAAA,CACA;ACrGA","file":"new-people-form.vue","sourcesContent":["<template>\r\n  <section class=\"wrapper\">\r\n    <form class=\"make-person\" v-on:submit.prevent=\"handleSubmit\">\r\n      <h4>Add new person:</h4>\r\n      <label for=\"first-name\" class=\"make-person__unit\">\r\n        First Name:\r\n        <input\r\n          v-on:change=\"HandlerChangeTextInput\"\r\n          type=\"text\"\r\n          name=\"firstName\"\r\n          class=\"make-person__input\"\r\n          id=\"first-name\"\r\n          placeholder=\"type text here\"\r\n        >\r\n      </label>\r\n\r\n      <label for=\"last-name\" class=\"make-person__unit\">\r\n        Last Name:\r\n        <input\r\n          v-on:change=\"HandlerChangeTextInput\"\r\n          type=\"text\"\r\n          name=\"lastName\"\r\n          class=\"make-person__input\"\r\n          id=\"last-name\"\r\n          placeholder=\"type text here\"\r\n        >\r\n      </label>\r\n      <button type=\"submit\" class=\"make-person__button\">\r\n        <span class=\"button__text\">Add person</span>\r\n      </button>\r\n      <p v-if=\"errors.length\">\r\n        <b>Пожалуйста исправьте указанные ошибки:</b>\r\n        <ul>\r\n          <li v-for=\"error in errors\" :key=\"error\">{{ error }}</li>\r\n       </ul>\r\n      </p>\r\n    </form>\r\n  </section>\r\n</template>\r\n<script>\r\nexport default {\r\n  data() {\r\n    return {\r\n      person: {\r\n        firstName: \"\",\r\n        lastName: \"\"\r\n      },\r\n      errors: []\r\n    };\r\n  },\r\n  methods: {\r\n    HandlerChangeTextInput(evt) {\r\n      this.person[evt.target.name] = evt.target.value;\r\n    },\r\n    checkForm: function() {\r\n      if (this.person.firstName && this.person.lastName) {\r\n        return true;\r\n      }\r\n\r\n      this.errors = [];\r\n\r\n      if (!this.person.firstName) {\r\n        this.errors.push(\"Требуется указать имя.\");\r\n      }\r\n      if (!this.person.lastName) {\r\n        this.errors.push(\"Требуется указать фамилию.\");\r\n      }\r\n    },\r\n    handleSubmit() {\r\n      if (this.checkForm()) {\r\n        this.errors = [];\r\n        this.$emit(\"add_person\", this.person);\r\n      }\r\n    }\r\n  }\r\n};\r\n</script>\r\n<style>\r\n.wrapper {\r\n  padding: 20px 40px;\r\n}\r\n.make-person {\r\n  width: 300px;\r\n  border: 1px solid lightblue;\r\n  border-radius: 5px;\r\n  padding: 15px 15px 30px 25px;\r\n  background-color: lightblue;\r\n  color: orangered;\r\n}\r\n.make-person__button {\r\n  margin: 10px 0 10px 0;\r\n  padding: 10px 15px;\r\n  border-radius: 5px;\r\n  border-width: 0px;\r\n  color: lightblue;\r\n  background-color: orangered;\r\n  font-size: 18px;\r\n  box-shadow: 0px 0px 0px 1px rgba(255, 69, 0, 1);\r\n}\r\n.make-person__button:hover {\r\n  box-shadow: 5px 5px 10px 0px rgba(255, 69, 0, 0.5);\r\n}\r\n\r\n.make-person__button:hover .button__text {\r\n  color: black;\r\n}\r\n.make-person__unit {\r\n  display: block;\r\n  padding: 5px 0;\r\n}\r\n.make-person__unit:hover {\r\n  color: black;\r\n}\r\n\r\n.make-person__input {\r\n  border-width: 0px;\r\n  border-radius: 1px;\r\n  line-height: 24px;\r\n  padding: 2px 5px;\r\n}\r\n</style>\r\n","\n.wrapper{padding:20px 40px\n}\n.make-person{width:300px;border:1px solid #add8e6;border-radius:5px;padding:15px 15px 30px 25px;background-color:#add8e6;color:#ff4500\n}\n.make-person__button{margin:10px 0;padding:10px 15px;border-radius:5px;border-width:0;color:#add8e6;background-color:#ff4500;font-size:18px;-webkit-box-shadow:0 0 0 1px #ff4500;box-shadow:0 0 0 1px #ff4500\n}\n.make-person__button:hover{-webkit-box-shadow:5px 5px 10px 0 rgba(255,69,0,.5);box-shadow:5px 5px 10px 0 rgba(255,69,0,.5)\n}\n.make-person__button:hover .button__text{color:#000\n}\n.make-person__unit{display:block;padding:5px 0\n}\n.make-person__unit:hover{color:#000\n}\n.make-person__input{border-width:0;border-radius:1px;line-height:24px;padding:2px 5px\n}"]}]);
 
 
 
@@ -1694,7 +1722,7 @@ var render = function() {
         on: {
           submit: function($event) {
             $event.preventDefault()
-            return _vm.$emit("addPerson", _vm.person)
+            return _vm.handleSubmit($event)
           }
         }
       },
@@ -1737,7 +1765,21 @@ var render = function() {
           ]
         ),
         _vm._v(" "),
-        _vm._m(0)
+        _vm._m(0),
+        _vm._v(" "),
+        _vm.errors.length
+          ? _c("p", [
+              _c("b", [_vm._v("Пожалуйста исправьте указанные ошибки:")]),
+              _vm._v(" "),
+              _c(
+                "ul",
+                _vm._l(_vm.errors, function(error) {
+                  return _c("li", { key: error }, [_vm._v(_vm._s(error))])
+                }),
+                0
+              )
+            ])
+          : _vm._e()
       ]
     )
   ])
@@ -1957,7 +1999,7 @@ var render = function() {
           on: { sortPersons: _vm.setSortConfiguration }
         }),
         _vm._v(" "),
-        _c("NewPeopleForm", { on: { addPerson: _vm.addPerson } })
+        _c("NewPeopleForm", { on: { add_person: _vm.addPerson } })
       ],
       1
     )
